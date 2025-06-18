@@ -2,12 +2,11 @@ const UserModel = require('../models/userModel');
 
 exports.addUser = async (req, res) => {
   try {
-    const { firstname, lastname, email, phone, image } = req.body;
-    // image จะเป็นลิงก์ URL ที่ผู้ใช้ส่งมา ไม่ต้องสนใจ req.file
-    if (!firstname || !lastname || !email || !phone) {
-      return res.status(400).json({ message: 'Please provide all required fields [firstname, lastname, email, phone]' });
+    const { firstname, lastname, email, phone, image, gender } = req.body;
+    if (!firstname || !lastname || !email || !phone || !gender) {
+      return res.status(400).json({ message: 'Please provide all required fields [firstname, lastname, email, phone, gender]' });
     }
-    const newUser = new UserModel({ firstname, lastname, email, phone, image });
+    const newUser = new UserModel({ firstname, lastname, email, phone, image, gender });
     await newUser.save();
     const responseData = {
       id: newUser._id.toString(),
@@ -16,6 +15,7 @@ exports.addUser = async (req, res) => {
       email: newUser.email,
       phone: newUser.phone,
       image: newUser.image,
+      gender: newUser.gender,
       createdAt: newUser.createdAt,
       updatedAt: newUser.updatedAt,
     };
@@ -29,7 +29,7 @@ exports.addUser = async (req, res) => {
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await UserModel.find().select('-__v');
-    res.status(200).json(users);
+    res.status(200).json({ users });
   } catch (error) {
     console.error('Error fetching users:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -53,14 +53,13 @@ exports.getUserById = async (req, res) => {
 exports.updateUserById = async (req, res) => {
   try {
     const { id } = req.params;
-    const { firstname, lastname, email, phone, image } = req.body;
-    // image จะเป็นลิงก์ URL ที่ผู้ใช้ส่งมา ไม่ต้องสนใจ req.file
-    if (!firstname || !lastname || !email || !phone) {
-      return res.status(400).json({ message: 'Please provide all required fields [firstname, lastname, email, phone]' });
+    const { firstname, lastname, email, phone, image, gender } = req.body;
+    if (!firstname || !lastname || !email || !phone || !gender) {
+      return res.status(400).json({ message: 'Please provide all required fields [firstname, lastname, email, phone, gender]' });
     }
     const updatedUser = await UserModel.findByIdAndUpdate(
       id,
-      { firstname, lastname, email, phone, image },
+      { firstname, lastname, email, phone, image, gender },
       { new: true }
     ).select('-__v');
     if (!updatedUser) {
