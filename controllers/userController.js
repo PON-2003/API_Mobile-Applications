@@ -3,9 +3,7 @@ const UserModel = require('../models/userModel');
 exports.addUser = async (req, res) => {
   try {
     const { firstname, lastname, email, phone, image, gender } = req.body;
-    if (!firstname || !lastname || !email || !phone || !gender) {
-      return res.status(400).json({ message: 'Please provide all required fields [firstname, lastname, email, phone, gender]' });
-    }
+    // ไม่ต้องเช็ค required ทุก field
     const newUser = new UserModel({ firstname, lastname, email, phone, image, gender });
     await newUser.save();
     const responseData = {
@@ -54,9 +52,7 @@ exports.updateUserById = async (req, res) => {
   try {
     const { id } = req.params;
     const { firstname, lastname, email, phone, image, gender } = req.body;
-    if (!firstname || !lastname || !email || !phone || !gender) {
-      return res.status(400).json({ message: 'Please provide all required fields [firstname, lastname, email, phone, gender]' });
-    }
+    // ไม่ต้องเช็ค required ทุก field
     const updatedUser = await UserModel.findByIdAndUpdate(
       id,
       { firstname, lastname, email, phone, image, gender },
